@@ -1,8 +1,8 @@
 /*
  * @author José Anderson Amorim Estevão
- * @projeto PIBIC
- * @date 2024-10-26
- * @version 1.0.0
+ * @projeto PIBIC - Análise Quantitativa de Imagem 
+ * @date 07-11-2024
+ * @version 1.1
  * @description Processamento de imagens de microscopia
  * @param caminho - caminho da pasta onde estão as imagens
  * @param tipoArquivo - tipo de arquivo a ser processado
@@ -11,14 +11,13 @@
 
 
 caminho = getDirectory("Caminho onde esta as imagens");
+resultados = getDirectory("Caminho onde salva os resultado das imagens");
 tipoArquivo = '.tif';
-localOndeSalva = "C:/pibic/imagens/Resultados/";
+localOndeSalva = resultados;
 processarPasta(caminho);
 
 // function para scanear pastas/subpastas/arquivos para procurar imagens .tif
 function processarPasta(caminho) {
-
-
     list = getFileList(caminho);
     list = Array.sort(list);
     for (i = 0; i < list.length; i++) {
@@ -29,13 +28,15 @@ function processarPasta(caminho) {
     }
 }
 var aberto = false;
+areaArrayGeral = newArray(0);
 function processarImagem(caminho, localOndeSalva, file, cont) {
-    //run("Read and Write Excel", "file=[" + localOndeSalva + "resultsxls/Processed_All.xlsx] file_mode=read_and_open");
+
     ///////// inicio abrir arquivos ////////////////
     if (file + "" == 'bkg.tif') {
         return;
     }
-    open("C:/pibic/imagens/1/" + file);
+
+    open(caminho + file);
     if (aberto) {
         aberto = false;
         run("Close");
@@ -43,13 +44,13 @@ function processarImagem(caminho, localOndeSalva, file, cont) {
     } else {
         aberto = true;
 
-        open("C:/pibic/imagens/1/bkg.tif");
+        open(caminho + "/bkg.tif");
     }
-    open("C:/pibic/imagens/1/" + file);
+    open(caminho + file);
     fileNoExtension = File.nameWithoutExtension;
     /////////// fim abrir arquivos ////////////
 
-    ////////// inicio do processamento ////////////////
+    ////////// inicio processamento ////////////////
    
     imageCalculator("Subtract create 32-bit",  file + "", "bkg.tif");
     selectImage("Result of "+file + "");
@@ -68,16 +69,15 @@ function processarImagem(caminho, localOndeSalva, file, cont) {
     run("Skeletonize (2D/3D)");
     close();
     run("Analyze Skeleton (2D/3D)", "prune=none calculate show display");
-    //////////// fim do processamento ////////////
+    //////////// fim processamento ////////////
 
     //////// inicio salvamento /////////////////
-    saveAs("Results", "C:/pibic/imagens/Resultados/resultsxls/" + fileNoExtension + ".xls");
+    saveAs("Tiff", localOndeSalva + file);
+    saveAs("Results", localOndeSalva + fileNoExtension + ".xls");
 
-    saveAs("Jpeg", "C:/pibic/imagens/Resultados/res_" + file + ".jpg");
     // print("Processing: " + caminho + File.separator + file);
     // print("Saving to: " + localOndeSalva);
     //////////// fim salvamento /////////
-    //run("Read and Write Excel", "file_mode=write_and_close");
     run("Close");
     run("Close");
 }
