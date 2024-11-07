@@ -56,12 +56,12 @@ function processarImagem(caminho, localOndeSalva, file, cont) {
     selectImage("Result of "+file + "");
     setOption("ScaleConversions", true);
     run("8-bit");
-    run("Enhance Local Contrast (CLAHE)", "blocksize=127 histogram=256 maximum=3 mask=None fast_(less_accurate)");
+    run("Enhance Local Contrast (CLAHE)", "blocksize=127 histogram=256 maximum=3 mask=*None* fast_(less_accurate)");
     run("Unsharp Mask...", "radius=1 mask=0.60");
     run("LoG 3D");
     setAutoThreshold("Triangle dark no-reset");
-    //run("Threshold...");
-    //setThreshold(120, 255);
+    run("Threshold...");
+    setThreshold(120, 255);
     run("Convert to Mask");
     run("Close");
     run("Directional Filtering", "type=Max operation=Opening line=20 direction=80");
